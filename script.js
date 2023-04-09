@@ -10,13 +10,14 @@ window.onload = () => {
       this.width = width;
       this.height = height;
       this.enemies = [];
-      this.enemyInterval = 100;
+      this.enemyInterval = 500;
       this.enemyTimer = 0;
+      this.enemyTypes = ['worm', 'ghost']
     }
     update(deltaTime) {
       this.enemies = this.enemies.filter(object => !object.markedForDeletion);
       if (this.enemyTimer > this.enemyInterval) {
-        this.#addNewEnemy();
+        this.#addNewEnemy(); 
         this.enemyTimer = 0;
       } else {
         this.enemyTimer += deltaTime;
@@ -27,7 +28,9 @@ window.onload = () => {
       this.enemies.forEach(object => object.draw(this.ctx));
     }
     #addNewEnemy() {
-      this.enemies.push(new Worm(this));
+      const randomEnemy = this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
+      if (randomEnemy == 'worm') this.enemies.push(new Worm(this));
+      else if (randomEnemy == 'ghost') this.enemies.push(new Ghost(this));
       this.enemies.sort((a,b) => {
         return a.y - b.y;
       });
@@ -56,9 +59,9 @@ window.onload = () => {
       this.width = this.spriteWidth * 0.5;
       this.height = this.spriteHeight * 0.5; 
       this.x = this.game.width;
-      this.y = Math.random() * this.game.height;
+      this.y = this.game.height - this.height;
       this.image = worm; 
-      this.vx = Math.random() * 0.1 + 1;
+      this.vx = Math.random() * 0.1 + 2;
     }
   }
 
@@ -70,9 +73,36 @@ window.onload = () => {
       this.width = this.spriteWidth * 0.5;
       this.height = this.spriteHeight * 0.5; 
       this.x = this.game.width;
-      this.y = Math.random() * this.game.height;
+      this.y = Math.random() * this.game.height * 0.6;
       this.image = ghost; 
-      this.vx = Math.random() * 0.2 + 1;
+      this.vx = Math.random() * 0.2 + 2;
+      this.angle = 0;
+      this.curve = Math.random() * 3;
+    }
+    update(deltaTime) {
+      super.update(deltaTime);
+      this.y += Math.sin(this.angle) * this.curve;
+      this.angle += 0.04;
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = 0.7;
+      super.draw(ctx); 
+      ctx.restore();
+    }
+  }
+
+  class Spider extends Enemy {
+    constructor(game) {
+      super(game);
+      this.spriteWidth = 310;
+      this.spriteHeight = 175;
+      this.width = this.spriteWidth * 0.5;
+      this.height = this.spriteHeight * 0.5; 
+      this.x = this.game.width;
+      this.y = 0 - this.height;
+      this.image = spider; 
+      this.vx = 0
     }
   }
 
@@ -84,7 +114,6 @@ window.onload = () => {
     lastTime = timeStamp;
     game.update(deltaTime); 
     game.draw();
-
     requestAnimationFrame(animate);
   };
   animate(0);
