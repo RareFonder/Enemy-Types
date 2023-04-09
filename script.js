@@ -12,7 +12,7 @@ window.onload = () => {
       this.enemies = [];
       this.enemyInterval = 500;
       this.enemyTimer = 0;
-      this.enemyTypes = ['worm', 'ghost']
+      this.enemyTypes = ['worm', 'ghost', 'spider'];
     }
     update(deltaTime) {
       this.enemies = this.enemies.filter(object => !object.markedForDeletion);
@@ -31,9 +31,10 @@ window.onload = () => {
       const randomEnemy = this.enemyTypes[Math.floor(Math.random() * this.enemyTypes.length)];
       if (randomEnemy == 'worm') this.enemies.push(new Worm(this));
       else if (randomEnemy == 'ghost') this.enemies.push(new Ghost(this));
-      this.enemies.sort((a,b) => {
+      else if (randomEnemy == 'spider') this.enemies.push(new Spider(this));
+      /*this.enemies.sort((a,b) => {
         return a.y - b.y;
-      });
+      });*/
     }
   };
 
@@ -43,7 +44,7 @@ window.onload = () => {
       this.markedForDeletion = false;
     }
     update(deltaTime) {
-      this.x -= this.vx;
+      this.x -= this.vx * deltaTime;
       if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
     draw(ctx) {
@@ -61,7 +62,7 @@ window.onload = () => {
       this.x = this.game.width;
       this.y = this.game.height - this.height;
       this.image = worm; 
-      this.vx = Math.random() * 0.1 + 2;
+      this.vx = Math.random() * 0.1 + 0.1;
     }
   }
 
@@ -75,7 +76,7 @@ window.onload = () => {
       this.x = this.game.width;
       this.y = Math.random() * this.game.height * 0.6;
       this.image = ghost; 
-      this.vx = Math.random() * 0.2 + 2;
+      this.vx = Math.random() * 0.2 + 0.1;
       this.angle = 0;
       this.curve = Math.random() * 3;
     }
@@ -99,10 +100,17 @@ window.onload = () => {
       this.spriteHeight = 175;
       this.width = this.spriteWidth * 0.5;
       this.height = this.spriteHeight * 0.5; 
-      this.x = this.game.width;
+      this.x = Math.random() * this.game.width;
       this.y = 0 - this.height;
       this.image = spider; 
-      this.vx = 0
+      this.vx = 0;
+      this.vy = Math.random() * 0.1 + 0.1;
+      this.maxLength = Math.random() * this.game.height;
+    }
+    update(deltaTime) {
+      super.update(deltaTime);
+      this.y += this.vy * deltaTime;
+      if (this.y > this.maxLength) this.vy *= -1;
     }
   }
 
