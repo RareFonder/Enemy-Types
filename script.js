@@ -85,7 +85,7 @@ window.onload = () => {
       this.y += Math.sin(this.angle) * this.curve;
       this.angle += 0.04;
     }
-    draw() {
+    draw(ctx) {
       ctx.save();
       ctx.globalAlpha = 0.7;
       super.draw(ctx); 
@@ -111,6 +111,13 @@ window.onload = () => {
       super.update(deltaTime);
       this.y += this.vy * deltaTime;
       if (this.y > this.maxLength) this.vy *= -1;
+    }
+    draw(ctx) {
+      ctx.beginPath();
+      ctx.moveTo(this.x + this.width * 0.5, 0);
+      ctx.lineTo(this.x + this.width * 0.5, this.y + 10);
+      ctx.stroke();
+      super.draw(ctx);
     }
   }
 
