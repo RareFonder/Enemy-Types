@@ -10,7 +10,7 @@ window.onload = () => {
       this.width = width;
       this.height = height;
       this.enemies = [];
-      this.enemiesInterval = 1000;
+      this.enemiesInterval = 300;
       this.enemyTimer = 0;
     }
     update(deltaTime) {
@@ -27,28 +27,36 @@ window.onload = () => {
       this.enemies.forEach(object => object.draw(this.ctx));
     }
     #addNewEnemy() {
-      this.enemies.push(new Enemy(this));
+      this.enemies.push(new Worm(this));
     }
   };
 
   class Enemy {
     constructor(game) {
       this.game = game;
-      this.x = this.game.width;
-      this.y = Math.random() * this.game.height;
-      this.width = 100;
-      this.height = 100;  
       this.markedForDeletion = false;
     }
     update() {
       this.x--;
-
       if (this.x < 0 - this.width) this.markedForDeletion = true;
     }
     draw(ctx) {
-      ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
     }
   };
+
+  class Worm extends Enemy {
+    constructor(game) {
+      super(game);
+      this.spriteWidth = 229;
+      this.spriteHeight = 171
+      this.width = 300;
+      this.height = 15;
+      this.x = this.game.width;
+      this.y = Math.random() * this.game.height;
+      this.image = worm;  
+    }
+  }
 
   const game = new Game(ctx, canvas.width, canvas.height);
   let lastTime = 1;
@@ -56,7 +64,7 @@ window.onload = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
-    game.update(deltaTime);
+    game.update(deltaTime); 
     game.draw();
 
     requestAnimationFrame(animate);
